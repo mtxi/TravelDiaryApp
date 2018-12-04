@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">TravelDiaryApp</string>
+    <string name="choose_image">Choose</string>
+    <string name="Enter_Caption">Enter caption</string>
+    <string name="Upload">Upload</string>
+    <string name="ShowPosts">Show</string>
+    <string name="ImagePreview">Image Preview</string>
+    <string name="openThird">open Third Activity</string>
+    <string name="HomeNav">Home</string>
+    <string name="MapView">Map</string>
+    <string name="Trips">Trips</string>
+    <string name="Statistics">Statistics</string>
+    <string name="textPlaceHolder">Say something!</string>
+</resources>

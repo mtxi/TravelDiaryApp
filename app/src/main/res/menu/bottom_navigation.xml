@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#a7afb8">
+
+<item
+    android:id="@+id/nav_home"
+    android:enabled="true"
+    android:icon="@drawable/ic_nav_home"
+    android:title="@string/HomeNav"
+    app:showAsAction="ifRoom"
+    />
+<item
+    android:id="@+id/nav_location"
+    android:enabled="true"
+    android:icon="@drawable/ic_nav_location"
+    android:title="@string/MapView"
+    app:showAsAction="ifRoom"/>
+<item
+    android:id="@+id/nav_trips"
+    android:enabled="true"
+    android:icon="@drawable/ic_nav_trips"
+    android:title="@string/Trips"
+    app:showAsAction="ifRoom"/>
+<item
+    android:id="@+id/nav_statistics"
+    android:enabled="true"
+    android:icon="@drawable/ic_nav_statistics"
+    android:title="@string/Statistics"
+    app:showAsAction="ifRoom"/>
+
+    </menu>
