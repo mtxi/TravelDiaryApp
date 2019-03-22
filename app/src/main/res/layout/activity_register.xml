@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Register">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="10dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:textColor="@color/navColour"
+            android:text="Register"/>
+        
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:id="@+id/newUser"
+            android:padding="16dp"
+            android:textColor="#000"
+            android:hint="username"/>
+        
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:id="@+id/newEmail"
+            android:padding="16dp"
+            android:inputType="textEmailAddress"
+            android:textColor="#000"
+            android:hint="email"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:layout_margin="8dp"
+            android:id="@+id/newPass"
+            android:textColor="#000"
+            android:inputType="textPassword"
+            android:hint="password"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/registerBtn"
+            android:layout_marginTop="10dp"
+            android:text="Register"
+            android:textColor="#fff"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/mainColour"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/loginView"
+            android:layout_gravity="center"
+            android:layout_margin="16dp"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/navColour"
+            android:text="Already registered? Log In"/>
+
+    </LinearLayout>
+
+
+</RelativeLayout>
