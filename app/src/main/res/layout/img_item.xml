@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="350dp"
-    android:layout_margin="5dp"
+    android:layout_margin="10dp"
     android:label="Recent Entries"
     card_view:cardCornerRadius="5dp"
-    card_view:cardElevation="0dp"
-    card_view:cardMaxElevation="1dp"
+    card_view:cardElevation="2dp"
+    card_view:cardMaxElevation="2dp"
     card_view:cardPreventCornerOverlap="false"
     card_view:cardUseCompatPadding="true">
 
@@ -19,7 +19,7 @@
         tools:ignore="UseCompoundDrawables">
 
         <TextView
-            android:id="@+id/text_caption"
+            android:id="@+id/jentry_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -27,13 +27,14 @@
             android:layout_marginBottom="8dp"
             android:text="Name"
             android:textAlignment="textStart"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="20sp" />
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
         <ImageView
             android:id="@+id/img_view_posts"
             android:layout_width="match_parent"
-            android:layout_height="304dp" />
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 

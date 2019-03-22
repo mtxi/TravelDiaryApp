@@ -9,24 +9,38 @@
     android:padding="10dp"
     tools:context=".ViewJournalEntries">
 
-
     <EditText
         android:id="@+id/choose_caption"
+        android:layout_width="374dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn_upload_image"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginBottom="75dp"
+        android:hint="@string/Enter_Caption"
+        android:textColorHint="@color/places_text_black_alpha_87"
+        android:importantForAutofill="no"
+        android:textColor="@color/quantum_black_text"
+        android:inputType="text"
+        tools:targetApi="o" />
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/Enter_Caption"
-        android:importantForAutofill="no"
-        android:inputType="text" tools:targetApi="o" />
+        android:id="@+id/entry_location"
+        android:layout_above="@+id/btn_upload_image"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="125dp"
+        android:textColor="@color/quantum_black_text"
+        />
 
     <ImageView
         android:id="@+id/image_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/progress_bar"
-        android:layout_below="@id/choose_caption"
+        android:layout_height="250dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="-1dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="160dp"
         android:contentDescription="@string/ImagePreview" />
 
     <ProgressBar
@@ -35,9 +49,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/btn_upload_image"
-        android:layout_alignParentStart="true"
         android:layout_marginStart="0dp"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="152dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btn_add_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="86dp"
+        android:layout_marginBottom="5dp"
+        android:layout_toEndOf="@+id/btn_add_entry"
+        android:background="@color/colorAccent"
+        android:clickable="true"
+        android:focusable="true"
+        android:text="@string/Upload"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/ic_btn_add_location" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/btn_add_entry"
@@ -45,7 +75,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="82dp"
+        android:layout_marginStart="160dp"
         android:layout_marginBottom="5dp"
         android:background="@color/mainColour"
         android:clickable="true"
@@ -61,9 +91,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="166dp"
+        android:layout_marginStart="235dp"
         android:layout_marginBottom="5dp"
-        android:layout_toEndOf="@+id/btn_add_entry"
         android:background="@color/colorAccent"
         android:clickable="true"
         android:focusable="true"
@@ -72,34 +101,20 @@
         app:fabSize="normal"
         app:srcCompat="@drawable/ic_btn_save" />
 
-    <Button
-        android:id="@+id/btn_show_posts"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/btn_upload_image"
-        android:layout_alignBottom="@+id/btn_upload_image"
-        android:layout_marginStart="30dp"
-        android:layout_toEndOf="@+id/btn_upload_image"
-        android:background="@color/colorAccent"
-        android:gravity="center"
-        android:text="@string/ShowPosts"
-        android:textColor="@color/common_google_signin_btn_text_dark_default" />
-
-    <!--<FrameLayout
-        android:id="@+id/navLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/bottom_navigation"
-        android:orientation="vertical">
-
-    </FrameLayout>
-
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="51dp"
+        android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        app:menu="@menu/bottom_navigation"/>-->
+        android:layout_marginTop="10dp"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="0dp"
+        android:layout_marginBottom="0dp"
+        android:background="#a7afb8"
+        app:itemIconTint="#ffffff"
+        app:itemTextColor="#ffffff"
+        app:menu="@menu/bottom_navigation" />
 
 
 </RelativeLayout>

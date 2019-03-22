@@ -5,8 +5,11 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/toolbarColour</item>
         <item name="colorPrimaryDark">@color/navColour</item>
-        <item name="colorAccent">@color/navColour</item>
-        <item name="android:textColorPrimary">@color/white</item>
+        <item name="colorAccent">@color/toolbarColour</item>
+        <item name="android:layout">@color/white</item>
+        <item name="android:label">@color/white</item>
+        <!--<item name="android:textColor">@color/quantum_grey700</item>
+        <item name="android:textColorPrimary">@color/white</item>-->
     </style>
 
     <style name="AppTheme.NoActionBar">

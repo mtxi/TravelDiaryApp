@@ -1,101 +1,197 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:layout_width="wrap_content"
+android:theme="@style/Theme.AppCompat"
+android:layout_height="match_parent"
+android:padding="10dp"
+tools:context=".ViewJournalEntries">
+
+<ScrollView
+
+    android:id="@+id/scroll_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    android:padding="0dp"
-    tools:context=".ViewJournalEntries">
+    android:layout_height="wrap_content"
+    android:layout_marginStart="0dp"
+    android:layout_marginBottom="3dp">
 
-
-    <EditText
-        android:id="@+id/choose_caption"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="5dp"
-        android:hint="@string/textPlaceHolder"
-        android:layout_margin="5dp"
-        android:importantForAutofill="no"
-        android:inputType="textMultiLine"
-        android:singleLine="false"
-        android:background="@null"
-        android:textColor="@color/common_google_signin_btn_text_dark_focused"
-        tools:targetApi="o" />
+        android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/image_view"
-        android:layout_width="match_parent"
-        android:layout_height="270dp"
-        android:layout_above="@id/progress_bar"
-        android:layout_below="@id/choose_caption"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="0dp"
-        android:layout_margin="5dp"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="1dp"
-        android:contentDescription="@string/ImagePreview" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/btn_upload_image"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp"
-        android:layout_margin="5dp"
-        android:layout_marginStart="0dp"
-        android:layout_marginBottom="5dp" />
+            <EditText
+                android:id="@+id/choose_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="30dp"
+                android:background="@android:color/transparent"
+                android:hint="Title"
+                android:importantForAutofill="yes"
+                android:inputType="textAutoComplete"
+                android:maxHeight="140dp"
+                android:scrollbars="vertical"
+                android:textColor="@color/quantum_black_text"
+                android:textColorHint="@color/places_text_black_alpha_87"
+                tools:targetApi="o" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/btn_add_entry"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="100dp"
-        android:layout_marginBottom="65dp"
-        android:background="@color/mainColour"
-        android:clickable="true"
-        android:focusable="true"
-        android:scaleType="center"
-        android:textColor="@color/common_google_signin_btn_text_dark_default"
-        app:backgroundTint="@color/mainColour"
-        app:fabSize="mini"
-        app:srcCompat="@drawable/ic_btn_image" />
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/ic_title" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/btn_upload_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="250dp"
-        android:layout_marginBottom="65dp"
-        android:layout_toEndOf="@+id/btn_add_entry"
-        android:background="@color/mainColour"
-        android:clickable="true"
-        android:focusable="true"
-        android:text="@string/Upload"
-        android:textColor="@color/common_google_signin_btn_text_dark_default"
-        app:backgroundTint="@color/mainColour"
-        app:fabSize="mini"
-        app:srcCompat="@drawable/ic_btn_save" />
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:layout_marginTop="55dp"
+                android:background="@android:color/darker_gray" />
 
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="51dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginBottom="0dp"
-        android:layout_gravity="bottom"
-        android:background="#a7afb8"
-        app:itemIconTint="#ffffff"
-        app:itemTextColor="#ffffff"
-        app:menu="@menu/bottom_navigation" />
+            <TextView
+                android:id="@+id/entry_location"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/choose_title"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="55dp"
+                android:layout_marginBottom="20dp"
+                android:hint="Location"
+                android:textColor="@color/quantum_black_text"
+                android:textColorHint="@color/navColour"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="65dp"
+                android:src="@drawable/ic_location" />
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:layout_marginTop="105dp"
+                android:background="@android:color/darker_gray" />
+
+            <EditText
+                android:id="@+id/choose_caption"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/progress_bar"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="10dp"
+                android:hint="@string/Enter_Caption"
+                android:importantForAutofill="no"
+                android:inputType="textMultiLine"
+                android:overScrollMode="always"
+                android:scrollbarStyle="insideInset"
+                android:scrollbars="vertical"
+                android:textColor="@color/quantum_black_text"
+                android:textColorHint="@color/places_text_black_alpha_87"
+                tools:targetApi="o" />
+
+
+            <ImageView
+                android:id="@+id/image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/choose_caption"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="50dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/ImagePreview" />
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/entry_location"
+                android:layout_marginStart="0dp"
+                android:layout_marginBottom="5dp" />
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</ScrollView>
+
+
+
+<android.support.design.widget.FloatingActionButton
+    android:id="@+id/btn_add_location"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentStart="true"
+    android:layout_marginStart="325dp"
+    android:layout_marginTop="430dp"
+    android:layout_marginBottom="5dp"
+    android:background="@color/colorAccent"
+    android:clickable="true"
+    android:focusable="true"
+    android:text="@string/Upload"
+    android:textColor="@color/common_google_signin_btn_text_dark_default"
+    app:fabSize="normal"
+    app:srcCompat="@drawable/ic_btn_add_location" />
+
+<android.support.design.widget.FloatingActionButton
+    android:id="@+id/btn_add_entry"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="325dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    android:layout_below="@+id/btn_add_location"
+    android:background="@color/mainColour"
+    android:clickable="true"
+    android:focusable="true"
+    android:scaleType="center"
+    android:textColor="@color/common_google_signin_btn_text_dark_default"
+    app:fabSize="normal"
+    app:srcCompat="@drawable/ic_btn_image" />
+
+<android.support.design.widget.FloatingActionButton
+    android:id="@+id/btn_upload_image"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="325dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    android:layout_below="@id/btn_add_entry"
+    android:background="@color/colorAccent"
+    android:clickable="true"
+    android:focusable="true"
+    android:text="@string/Upload"
+    android:textColor="@color/common_google_signin_btn_text_dark_default"
+    app:fabSize="normal"
+    app:srcCompat="@drawable/ic_btn_save" />
+
+
+<android.support.design.widget.BottomNavigationView
+    android:id="@+id/bottom_navigation"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:labelVisibilityMode="labeled"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentBottom="true"
+    android:layout_gravity="bottom"
+    android:layout_marginStart="0dp"
+    android:background="#a7afb8"
+    app:itemIconTint="#ffffff"
+    app:itemTextColor="#ffffff"
+    app:menu="@menu/bottom_navigation" />
 
 
 </RelativeLayout>

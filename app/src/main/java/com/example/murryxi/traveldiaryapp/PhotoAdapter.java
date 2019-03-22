@@ -6,7 +6,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
@@ -18,9 +20,10 @@ import java.util.List;
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ImgViewHolder>
 {
     private Context imgContext;
-    private List<PhotoUpload> imgUploads;
+    private List<JournalEntry> imgUploads;
 
-    public PhotoAdapter(Context context, List<PhotoUpload> uploads)
+
+    public PhotoAdapter(Context context, List<JournalEntry> uploads)
     {
         imgContext = context;
         imgUploads = uploads;
@@ -37,8 +40,9 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ImgViewHolde
     @Override
     public void onBindViewHolder(@NonNull final ImgViewHolder imgViewHolder, int i)
     {
-        final PhotoUpload uplCurrent = imgUploads.get(i);
-        imgViewHolder.textViewName.setText(uplCurrent.getImgName());
+        JournalEntry uplCurrent = imgUploads.get(i);
+        String lng = Double.toString(uplCurrent.showLat());
+        imgViewHolder.location.setText(lng);
         GlideApp.with(imgContext)
                 .load(uplCurrent.getImgUrl())
                 .centerCrop()
@@ -54,16 +58,18 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ImgViewHolde
 
     class ImgViewHolder extends RecyclerView.ViewHolder
     {
-        TextView textViewName;
+        TextView location;
         ImageView imgView;
         public ImgViewHolder(View itemView)
         {
             super(itemView);
 
-            textViewName = itemView.findViewById(R.id.text_caption);
+            location = itemView.findViewById(R.id.jentry_location);
             imgView = itemView.findViewById(R.id.img_view_posts);
         }
 
     }
+
+
 
 }
