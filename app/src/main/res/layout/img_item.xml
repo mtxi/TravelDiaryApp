@@ -3,23 +3,62 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="350dp"
-    android:layout_margin="10dp"
-    android:label="Recent Entries"
-    card_view:cardCornerRadius="5dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="0dp"
+    card_view:cardCornerRadius="0dp"
     card_view:cardElevation="2dp"
     card_view:cardMaxElevation="2dp"
     card_view:cardPreventCornerOverlap="false"
     card_view:cardUseCompatPadding="true">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         tools:ignore="UseCompoundDrawables">
 
+        <ImageView
+            android:layout_width="150dp"
+            android:id="@+id/preview_image"
+            android:layout_height="100dp"
+            android:layout_marginStart="1dp"/>
+        <TextView
+            android:id="@+id/jentry_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="15dp"
+            android:layout_toEndOf="@id/preview_image"
+            android:padding="5dp"
+            android:text="Date"
+            android:textColor="@android:color/black"
+            android:textSize="15sp" />
+
         <TextView
             android:id="@+id/jentry_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="0dp"
+            android:padding="5dp"
+            android:text="Location"
+            android:layout_toEndOf="@id/preview_image"
+            android:layout_below="@+id/jentry_date"
+            android:textAlignment="textStart"
+            android:textSize="15sp" />
+
+        <!--<ImageView
+            android:id="@+id/location_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_toEndOf="@id/preview_image"
+            android:layout_below="@+id/jentry_date"
+            android:src="@drawable/ic_location" />-->
+
+        <!--<TextView
+            android:id="@+id/entry_caption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -28,14 +67,14 @@
             android:text="Name"
             android:textAlignment="textStart"
             android:textColor="@android:color/black"
-            android:textSize="20sp"
-            android:textStyle="bold"/>
+            android:textSize="15sp"
+            />-->
 
-        <ImageView
+        <!--<ImageView
             android:id="@+id/img_view_posts"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent" />-->
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </android.support.v7.widget.CardView>

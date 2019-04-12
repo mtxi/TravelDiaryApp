@@ -15,18 +15,21 @@ public class JournalEntry
     private double placeLat;
     private double placeLong;
     private String entryDate;
+    private String entryID;
 
     public JournalEntry()
     {
         // empty constructor
     }
 
-    public JournalEntry(String name, String url, String location, double lat, double lng)
+    public JournalEntry(String id, String date, String name, String url, String location, double lat, double lng)
     {
         if (name.trim().equals(""))
         {
             name = "Journal Entry";
         }
+        entryID = id;
+        entryDate = date;
         imgName = name;
         imgUrl = url;
         place = location;
@@ -37,6 +40,16 @@ public class JournalEntry
     public String getImgName()
     {
         return imgName;
+    }
+
+    public String getEntryID()
+    {
+        return entryID;
+    }
+
+    public String getEntryDate()
+    {
+        return entryDate;
     }
 
     public void setImgName(String name)
@@ -58,6 +71,11 @@ public class JournalEntry
     public void setPlaceName(String location)
     {
         place = location;
+    }
+
+    public void setEntryDate(String date)
+    {
+        entryDate = date;
     }
 
     public String getEntryLocation()

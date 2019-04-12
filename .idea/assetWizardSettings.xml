@@ -18,12 +18,23 @@
                                 <PersistentState>
                                   <option name="children">
                                     <map>
+                                      <entry key="clipArt">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="paddingPercent" value="-5" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
                                       <entry key="clipartAsset">
                                         <value>
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="url" value="jar:file:/D:/murryXi/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/communication/ic_location_on_black_24dp.xml" />
+                                                <entry key="url" value="jar:file:/D:/murryXi/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/image/ic_edit_black_24dp.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -33,9 +44,11 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="outputName" value="ic_red_marker" />
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="imageAsset" value="C:\Users\murryXi\AndroidStudioProjects\TravelDiaryApp\app\src\main\assets\loc-home.png" />
+                                      <entry key="outputName" value="ic_destination" />
                                       <entry key="theme" value="CUSTOM" />
-                                      <entry key="themeColor" value="e50e06" />
+                                      <entry key="themeColor" value="58ba21" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -51,7 +64,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="paddingPercent" value="-10" />
+                                                <entry key="paddingPercent" value="10" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
@@ -63,10 +76,11 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
+                                      <entry key="backgroundColor" value="59ee71" />
                                       <entry key="cropped" value="true" />
-                                      <entry key="iconShape" value="HRECT" />
-                                      <entry key="imageAsset" value="C:\Users\murryXi\Dropbox\Dropbox\photos\2018-10-15 07.28.52 1.jpg" />
-                                      <entry key="outputName" value="decoy_bg" />
+                                      <entry key="iconShape" value="NONE" />
+                                      <entry key="imageAsset" value="C:\Users\murryXi\AndroidStudioProjects\TravelDiaryApp\app\src\main\assets\airplane.png" />
+                                      <entry key="outputName" value="ic_airplane" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -76,7 +90,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputIconType" value="ACTIONBAR" />
+                            <entry key="outputIconType" value="LAUNCHER_LEGACY" />
                           </map>
                         </option>
                       </PersistentState>

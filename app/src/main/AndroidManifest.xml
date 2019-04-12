@@ -17,15 +17,15 @@
         android:label="Travel Diary"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-
+        android:theme="@style/AppTheme"
+        android:largeHeap="true">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDEy_R8hsXxR_3DmexmZStru4YC-Vja7kA" />
 
         <activity
             android:name=".ViewJournalEntries"
-            android:label="Journal Entries"
+            android:label="Home"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,20 +33,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity
+            android:name=".JournalEntryDetail"
+            android:label="Journal Entry"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".TripDetail"
+            android:label="Trip Details"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".AddJournalEntry"
             android:label="New Journal Entry"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ViewScheduledTrips"
             android:label="Upcoming Trips"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme" />
         <activity
-            android:name=".ViewTravelStats"
-            android:label="My Travel Stats"
-            android:theme="@style/AppTheme"/>
+            android:name=".ViewVisitedPlaces"
+            android:label="Visited Places"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".Register"
             android:label="@string/title_activity_register"
@@ -63,6 +70,10 @@
             android:name=".PickEntryLocation"
             android:label="Select Location"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ViewTravelStats"
+            android:label="My Travel Stats"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

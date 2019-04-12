@@ -1,6 +1,9 @@
 package com.example.murryxi.traveldiaryapp;
 
 import android.content.Intent;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -13,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +28,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 public class Register extends AppCompatActivity
 {
     private Button signupBtn;
@@ -31,6 +38,7 @@ public class Register extends AppCompatActivity
     private FirebaseAuth fbAuth;
     private DatabaseReference dbRef;
     private TextView loginView;
+    private ImageView logo;
 
     private static final String TAG = "Register";
 
@@ -45,8 +53,21 @@ public class Register extends AppCompatActivity
         newEmail = (EditText)findViewById(R.id.newEmail);
         newUsername = (EditText)findViewById(R.id.newUser);
         newPassword = (EditText)findViewById(R.id.newPass);
+        logo = findViewById(R.id.app_logo);
         fbAuth = FirebaseAuth.getInstance();
         dbRef = FirebaseDatabase.getInstance().getReference().child("users");
+
+        AssetManager assetManager = getAssets();
+
+        InputStream is = null;
+        try {
+            is = assetManager.open("travel.png");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Bitmap  bitmap = BitmapFactory.decodeStream(is);
+        logo.setImageBitmap(bitmap);
+
 
         loginView.setOnClickListener(new View.OnClickListener()
         {

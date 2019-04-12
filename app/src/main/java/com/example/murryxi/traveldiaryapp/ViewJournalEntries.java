@@ -1,17 +1,19 @@
 package com.example.murryxi.traveldiaryapp;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,7 +34,6 @@ public class ViewJournalEntries extends AppCompatActivity {
     private FloatingActionButton addEntryBtn;
     private BottomNavigationView botNavigationView;
     private ActionBar toolbar;
-    private Button logOutBtn;
 
 
     public DatabaseReference dbRef;
@@ -47,7 +48,6 @@ public class ViewJournalEntries extends AppCompatActivity {
         setContentView(R.layout.activity_display_img);
 
         addEntryBtn = findViewById(R.id.btn_add_entry);
-        logOutBtn = findViewById(R.id.btn_log_out);
         botNavigationView = findViewById(R.id.bottom_navigation);
         toolbar = getSupportActionBar();
 
@@ -105,6 +105,7 @@ public class ViewJournalEntries extends AppCompatActivity {
                 {
                     JournalEntry u = postSnapshot.getValue(JournalEntry.class);
                     imgUploads.add(u);
+
                 }
                 /* set adapter to recycle view */
                 imgAdapter = new PhotoAdapter(ViewJournalEntries.this, imgUploads);
@@ -128,14 +129,6 @@ public class ViewJournalEntries extends AppCompatActivity {
             }
         });
 
-        logOutBtn.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                fbAuth.signOut();
-            }
-        });
 
         botNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -160,7 +153,7 @@ public class ViewJournalEntries extends AppCompatActivity {
                         break;
                     case R.id.nav_statistics:
                         toolbar.setTitle("Travel Stats");
-                        in = new Intent(getApplicationContext(), ViewTravelStats.class);
+                        in = new Intent(getApplicationContext(), ViewVisitedPlaces.class);
                         startActivity(in);
                         overridePendingTransition(0,0);
                         break;
@@ -171,6 +164,43 @@ public class ViewJournalEntries extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.actionbarmenu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.mybutton)
+        {
+            AlertDialog.Builder logOutAlert = new AlertDialog.Builder(ViewJournalEntries.this);
+            logOutAlert.setTitle("Log Out");
+            logOutAlert.setMessage("Are you sure you want to log out?");
+            logOutAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    fbAuth.signOut();
+                }
+            });
+            logOutAlert.setNegativeButton("No", new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    dialog.cancel();
+                }
+            });
+            logOutAlert.show();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /* add new journal entry */

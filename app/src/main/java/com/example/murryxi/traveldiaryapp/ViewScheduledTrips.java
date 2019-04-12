@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -137,7 +138,8 @@ public class ViewScheduledTrips extends AppCompatActivity
                     overridePendingTransition(0,0);
                     break;
                 case R.id.nav_statistics:
-                    toolbar.setTitle("Travel Statistics");
+                    i = new Intent (getApplicationContext(), ViewVisitedPlaces.class);
+                    startActivity(i);
                     overridePendingTransition(0,0);
                     break;
                 default:
@@ -152,5 +154,23 @@ public class ViewScheduledTrips extends AppCompatActivity
     {
         Intent intent = new Intent(this, AddNewTrip.class);
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.actionbarmenu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.mybutton)
+        {
+            fbAuth.signOut();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

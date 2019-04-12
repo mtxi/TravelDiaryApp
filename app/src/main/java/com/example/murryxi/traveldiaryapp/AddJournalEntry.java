@@ -1,6 +1,7 @@
 package com.example.murryxi.traveldiaryapp;
 
-import android.arch.persistence.room.Database;
+import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
@@ -10,11 +11,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
-import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -38,19 +40,22 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.UploadTask;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class AddJournalEntry extends AppCompatActivity
 {
     private static final int PICK_IMAGE_REQUEST = 1;
 
-    private FloatingActionButton chooseImgBtn;
-    private FloatingActionButton postBtn;
+    private ImageView chooseImgBtn;
+    //private FloatingActionButton postBtn;
     private EditText chooseCaption;
     private ImageView previewImg;
     private ProgressBar progressBar;
-    private FloatingActionButton addLocationBtn;
+    private ImageView addLocationBtn;
+    private TextView entryDate;
     public TextView location;
 
     public double lat;
@@ -68,23 +73,29 @@ public class AddJournalEntry extends AppCompatActivity
     private FirebaseUser currentUser;
 
     private StorageTask uplTask;
+
+    DatePickerDialog pickerDialog;
     @Override
         protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         chooseImgBtn = findViewById(R.id.btn_add_entry);
-        postBtn = findViewById(R.id.btn_upload_image);
         chooseCaption = findViewById(R.id.choose_caption);
         previewImg = findViewById(R.id.image_view);
         progressBar = findViewById(R.id.progress_bar);
         addLocationBtn = findViewById(R.id.btn_add_location);
-
         location = findViewById(R.id.entry_location);
+        entryDate = findViewById(R.id.entry_date);
 
         Intent i = getIntent();
         String placeName = i.getStringExtra("Location");
         location.setText(placeName);
+
+        Calendar cdr = Calendar.getInstance();
+        String format = new SimpleDateFormat("E, MMMM d, yyyy", Locale.UK).format(cdr.getTime());
+
+        entryDate.setText(format);
 
         botNavigationView = findViewById(R.id.bottom_navigation);
         toolbar = getSupportActionBar();
@@ -97,14 +108,56 @@ public class AddJournalEntry extends AppCompatActivity
         dbUsers = FirebaseDatabase.getInstance().getReference("users");
         rtDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid());
 
+        entryDate.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                final Calendar cdr = Calendar.getInstance();
+                int day = cdr.get(Calendar.DAY_OF_MONTH);
+                int month = cdr.get(Calendar.MONTH);
+                int year = cdr.get(Calendar.YEAR);
+
+                pickerDialog = new DatePickerDialog(AddJournalEntry.this, new DatePickerDialog.OnDateSetListener()
+                {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth)
+                    {
+                        cdr.set(Calendar.YEAR, year);
+                        cdr.set(Calendar.MONTH, month);
+                        cdr.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                        String format = new SimpleDateFormat("E, MMMM d, yyyy", Locale.UK).format(cdr.getTime());
+                        entryDate.setText(format);
+                    }
+                }, year, month, day);
+
+                pickerDialog.show();
+            }
+        });
+
         chooseCaption.setOnClickListener(new View.OnClickListener()
         {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 chooseCaption.setFocusable(true);
-                chooseCaption.setFocusableInTouchMode(true);
                 chooseCaption.requestFocus(View.FOCUS_RIGHT);
+
             }
+        });
+
+        /* Hide soft keyboard when clicking outside Edittext*/
+        chooseCaption.setOnFocusChangeListener(new View.OnFocusChangeListener()
+        {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus)
+            {
+                if(!hasFocus)
+                {
+                    hideKeyboard(v);
+                }
+            }
+
         });
 
         chooseImgBtn.setOnClickListener(new View.OnClickListener()
@@ -113,23 +166,6 @@ public class AddJournalEntry extends AppCompatActivity
             public void onClick(View v)
             {
                 openChooseFile();
-            }
-        });
-
-
-        postBtn.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                if (uplTask != null && uplTask.isInProgress())
-                {
-                    Toast.makeText(AddJournalEntry.this, "Upload in progress", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    uploadTextImg();
-                }
             }
         });
 
@@ -168,7 +204,7 @@ public class AddJournalEntry extends AppCompatActivity
                         break;
                     case R.id.nav_statistics:
                         toolbar.setTitle("Travel Statistics");
-                        i = new Intent (getApplicationContext(), ViewTravelStats.class);
+                        i = new Intent (getApplicationContext(), ViewVisitedPlaces.class);
                         startActivity(i);
                         overridePendingTransition(0,0);
                         break;
@@ -181,6 +217,11 @@ public class AddJournalEntry extends AppCompatActivity
 
     }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedState) {
+        super.onRestoreInstanceState(savedState);
+    }
+
     /* lets user choose image from phone gallery */
     private void openChooseFile()
     {
@@ -188,6 +229,12 @@ public class AddJournalEntry extends AppCompatActivity
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+
+    public void hideKeyboard(View view)
+    {
+        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     @Override
@@ -243,11 +290,18 @@ public class AddJournalEntry extends AppCompatActivity
                     if (task.isSuccessful())
                     {
                         final Uri dlUri = task.getResult();
+                        final String date = entryDate.getText().toString().trim();
                         final String tmpImgCaption = chooseCaption.getText().toString().trim();
                         JournalEntry p = new JournalEntry();
                         final String tmpPlaceName = p.getEntryLocation();
                         final double tmpLat = p.getPlaceLat();
                         final double tmpLong = p.getPlaceLong();
+                        final boolean isVisited = true;
+
+                        Intent i = getIntent();
+                        final String cityVisited = i.getStringExtra("cityVisited");
+                        final String countryVisited = i.getStringExtra("countryVisited");
+                        final String entryKey = rtDatabaseRef.child("user_entries").push().getKey();
 
                         Toast.makeText(getApplicationContext(), "Post Successful", Toast.LENGTH_LONG).show();
                         progressBar.setVisibility(View.GONE);
@@ -256,14 +310,24 @@ public class AddJournalEntry extends AppCompatActivity
                         finish.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(finish);
                         /* send journal entry data to realtime database */
-                        final JournalEntry upl = new JournalEntry(tmpImgCaption, dlUri.toString(), tmpPlaceName, tmpLat, tmpLong);
-                        /* add all data to current user */
+                        final JournalEntry upl = new JournalEntry(entryKey, date, tmpImgCaption, dlUri.toString(), tmpPlaceName, tmpLat, tmpLong);
+                        /* add all data to current user's ID key */
                         dbUsers.addListenerForSingleValueEvent(new ValueEventListener()
                         {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot)
                             {
-                                rtDatabaseRef.child("user_entries").push().setValue(upl);
+                                rtDatabaseRef.child("user_entries").child(entryKey).setValue(upl);
+
+                                if (!dataSnapshot.hasChild(countryVisited))
+                                {
+                                    rtDatabaseRef.child("visited_countries").child(countryVisited).setValue(isVisited);
+                                }
+
+                                if (!dataSnapshot.hasChild(cityVisited))
+                                {
+                                    rtDatabaseRef.child("visited_cities").child(cityVisited).setValue(isVisited);
+                                }
 
                             }
                             @Override
@@ -308,6 +372,24 @@ public class AddJournalEntry extends AppCompatActivity
         {
             Toast.makeText(this, "Please select image", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.post_option, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.mybutton)
+        {
+            uploadTextImg();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

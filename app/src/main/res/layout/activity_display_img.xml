@@ -7,11 +7,22 @@
     tools:context=".ViewJournalEntries"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/title_jentry_page"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Journal Entries"
+        android:textSize="20sp"
+        android:layout_margin="10dp"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="670dp"
-        android:padding="12dp"
+        android:layout_below="@+id/title_jentry_page"
+        android:paddingBottom="0dp"
+        android:layout_gravity="fill_vertical"
+        android:layout_marginBottom="?attr/actionBarSize"
     />
 
     <android.support.design.widget.FloatingActionButton
@@ -45,15 +56,5 @@
         app:itemIconTint="#ffffff"
         app:itemTextColor="#ffffff"
         app:menu="@menu/bottom_navigation" />
-
-    <Button
-        android:id="@+id/btn_log_out"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/mainColour"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:text="Log Out" />
-
 
 </RelativeLayout>

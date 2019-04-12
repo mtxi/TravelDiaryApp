@@ -1,502 +1,389 @@
 package com.example.murryxi.traveldiaryapp;
 
-import android.animation.ValueAnimator;
-import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.graphics.PointF;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.ArrayMap;
-import android.view.MenuItem;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.MPPointF;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.gson.JsonElement;
-import com.mapbox.android.core.permissions.PermissionsListener;
-import com.mapbox.android.core.permissions.PermissionsManager;
-import com.mapbox.geojson.Point;
-import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
-import com.mapbox.mapboxsdk.location.LocationComponent;
-import com.mapbox.mapboxsdk.location.modes.CameraMode;
-import com.mapbox.mapboxsdk.location.modes.RenderMode;
-import com.mapbox.mapboxsdk.maps.MapView;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-import com.mapbox.mapboxsdk.maps.Style;
-import com.mapbox.geojson.Feature;
-import com.mapbox.geojson.FeatureCollection;
-import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.annotations.BubbleLayout;
-import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
-import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
-import com.mapbox.mapboxsdk.style.sources.GeoJsonOptions;
-import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
+import com.vikktorn.picker.State;
 
-import static com.mapbox.mapboxsdk.style.expressions.Expression.division;
-import static com.mapbox.mapboxsdk.style.expressions.Expression.exponential;
-import static com.mapbox.mapboxsdk.style.expressions.Expression.interpolate;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconColor;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.w3c.dom.Text;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ref.WeakReference;
-import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import androidx.versionedparcelable.NonParcelField;
-
-import static com.mapbox.mapboxsdk.style.expressions.Expression.eq;
-import static com.mapbox.mapboxsdk.style.expressions.Expression.get;
-import static com.mapbox.mapboxsdk.style.expressions.Expression.literal;
-import static com.mapbox.mapboxsdk.style.layers.Property.ICON_ANCHOR_BOTTOM;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAnchor;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconSize;
-
-public class ViewTravelStats extends AppCompatActivity implements
-        OnMapReadyCallback,  MapboxMap.OnMapClickListener, PermissionsListener
+public class ViewTravelStats extends AppCompatActivity
 {
-    MapView mapView_stats;
-    String mapBoxToken;
-    private MapboxMap mapboxMap;
-    private boolean markerSelected = false;
-
-    private static final String SYMBOL_ICON_ID = "SYMBOL_ICON_ID";
-    private static final String SOURCE_ID = "SOURCE_ID";
-    private static final String LAYER_ID = "LAYER_ID";
-
-    private PermissionsManager permissionsManager;
-
-    private String geoJsonSourceId = "geoJsonSourceLayerId";
-    private String symbolIcon = "symbolIconId";
-    public DatabaseReference dbRef;
-    public DatabaseReference queryRef;
-    public FirebaseUser currentUser;
-    private ActionBar toolbar;
+    private TextView textCountry;
+    private TextView textCity;
+    private TextView numCity;
+    private TextView numCountry;
+    private TextView progressText;
+    private LinearLayout expand1;
+    private LinearLayout expand2;
+    private boolean isExpand;
+    private DatabaseReference dbRef;
     private FirebaseAuth fbAuth;
-    private MarkerInfoAdapter markerAdapter;
-    private FeatureCollection featureCollection;
-    private static final int REQUEST_CODE_AUTOCOMPLETE = 1;
-    private BottomNavigationView botNavigationView;
-    final List<Feature> featureList = new ArrayList<>();
-    private List<JournalEntry> markerInfo = new ArrayList<>();
-    private RecyclerView markerRecycleView;
-    private CardView markerInfoView;
-    private TextView location;
-    private ImageView imgView;
+    private FirebaseUser currentUser;
+    public List<String> getCityList;
+    private ListView countryListView;
+    private ListView cityListView;
+    private ArrayAdapter<String> countryListAdapter;
+    private ArrayAdapter<String> cityListAdapter;
+    private List<String> cityList;
+    private ProgressBar progressBar;
+
+    List<String> countryList = new ArrayList<>();
+    List<String> getCountryList = new ArrayList<>();
+
+    // ArrayList to store contents from JSON
+    List<String> continentJson = new ArrayList<>();
+    List<String> countryJson = new ArrayList<>();
+
+    // ArrayList to store unique continents
+    List<String> newContinentJson = new ArrayList<>();
+    List<String> cList = new ArrayList<>();
+
+    // ArrayLists to collect group of indexes which specifies a continent in JSON
+    List<Integer> euIndex = new ArrayList<>();
+    List<Integer> naIndex = new ArrayList<>();
+    List<Integer> asIndex = new ArrayList<>();
+    List<Integer> saIndex = new ArrayList<>();
+
+    // ArrayLists to store countries visited based on continent
+    List<String> europe = new ArrayList<>();
+    List<String> asia = new ArrayList<>();
+    List<String> na = new ArrayList<>();
+    List<String> sa = new ArrayList<>();
+
+    private PieChart pieChart;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_stats);
 
-        mapBoxToken = BuildConfig.MAPBOX_ACCESS_TOKEN;
-        mapView_stats = findViewById(R.id.mapView_stats);
-        mapView_stats.onCreate(savedInstanceState);
-        botNavigationView = findViewById(R.id.bottom_navigation);
+        textCountry = findViewById(R.id.text_country_visited);
+        textCity = findViewById(R.id.text_city_visited);
+        expand1 = findViewById(R.id.expandableLayout1);
+        expand2 = findViewById(R.id.expandableLayout2);
+        countryListView = findViewById(R.id.list_visited_countries);
+        cityListView = findViewById(R.id.list_visited_cities);
+        numCity = findViewById(R.id.number_city_visited);
+        numCountry = findViewById(R.id.number_country_visited);
+        pieChart = findViewById(R.id.linechart);
+        progressBar = findViewById(R.id.progress);
+        progressText = findViewById(R.id.text_progress2);
+
+        expand1.setVisibility(View.GONE);
+        expand2.setVisibility(View.GONE);
+        isExpand = false;
+
+        //pieChart = findViewById(R.id.piechart);
 
         fbAuth = FirebaseAuth.getInstance();
         currentUser = fbAuth.getCurrentUser();
-        markerInfoView = findViewById(R.id.single_location_cardview);
+        dbRef = FirebaseDatabase.getInstance().getReference().child("users");
 
-        toolbar = getSupportActionBar();
-        mapView_stats.getMapAsync(this);
-
-        location = findViewById(R.id.cv_title_location);
-        imgView = findViewById(R.id.cv_location_image);
-
-        dbRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid()).child("user_entries");
-
-        botNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        textCountry.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item)
+            public void onClick(View v)
             {
-                Intent in;
-                switch (item.getItemId())
+                if(!isExpand)
                 {
-                    case R.id.nav_home:
-                        in = new Intent (getApplicationContext(), ViewJournalEntries.class);
-                        startActivity(in);
-                        overridePendingTransition(0,0);
-                        break;
-                    case R.id.nav_location:
-                        toolbar.setTitle("Maps");
-                        overridePendingTransition(0,0);
-                        break;
-                    case R.id.nav_trips:
-                        Intent i = new Intent (getApplicationContext(), ViewScheduledTrips.class);
-                        startActivity(i);
-                        overridePendingTransition(0,0);
-                        break;
-                    case R.id.nav_statistics:
-                        toolbar.setTitle("Travel Statistics");
-                        i = new Intent (getApplicationContext(), ViewTravelStats.class);
-                        startActivity(i);
-                        overridePendingTransition(0,0);
-                        break;
-                    default:
-                        break;
+                    expand1.setVisibility(View.VISIBLE);
+                    isExpand = true;
                 }
-                return true;
+                else
+                {
+                    expand1.setVisibility(View.GONE);
+                    isExpand = false;
+                }
             }
         });
 
-
-    }
-
-
-    @Override
-    public void onMapReady(@NonNull final MapboxMap mapboxMap)
-    {
-        this.mapboxMap = mapboxMap;
-
-        mapboxMap.setStyle(Style.DARK, new Style.OnStyleLoaded()
+        textCity.setOnClickListener(new View.OnClickListener()
         {
             @Override
-            public void onStyleLoaded(@NonNull Style style)
+            public void onClick(View v)
             {
-                enableUserLocation(style);
-                markerInfoView.setVisibility(View.INVISIBLE);
-                mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
-                        12.099, -79.045), 3));
-                featureCollection = FeatureCollection.fromFeatures(new Feature[] {});
-                featureList.clear();
-                if (featureCollection != null)
+                if(!isExpand)
                 {
-                    List<Double> latCoord = new ArrayList<>();
-                    List<Double> lngCoord = new ArrayList<>();
-                    List<LatLng> points = new ArrayList<>();
-                    ArrayMap<String, LatLng> keyPoints = new ArrayMap<>();
-                    dbRef.addListenerForSingleValueEvent(new ValueEventListener()
-                    {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-                        {
-                            //markerCoordinates.clear();
-
-                            for (DataSnapshot snapshot : dataSnapshot.getChildren())
-                            {
-                                JournalEntry location = snapshot.getValue(JournalEntry.class);
-                                latCoord.add(location.showLat());
-                                lngCoord.add(location.showLong());
-
-                            }
-
-                            for (int i = 0; i<lngCoord.size(); i++)
-                            {
-                                /*LatLng pt = new LatLng(lngCoord.get(i), latCoord.get(i));
-                                points.add(pt);*/
-
-                                featureList.add(Feature.fromGeometry(
-                                        Point.fromLngLat(lngCoord.get(i), latCoord.get(i))));
-                            }
-
-
-                            featureCollection = FeatureCollection.fromFeatures(featureList);
-
-                            style.addSource(new GeoJsonSource("marker-source", featureCollection,
-                                    new GeoJsonOptions().withCluster(true).withClusterMaxZoom(2)));
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            Toast.makeText(ViewTravelStats.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-
-                        }
-                    });
+                    expand2.setVisibility(View.VISIBLE);
+                    isExpand = true;
                 }
-
-
-                SymbolLayer unclustered = new SymbolLayer("unclustered-points", "marker-source");
-
-                style.addImage("my-marker-image", BitmapFactory.decodeResource(ViewTravelStats.this.getResources(), R.drawable.ic_red_marker));
-                style.addLayer(new SymbolLayer("marker-layer", "marker-source").withProperties(PropertyFactory.iconImage("my-marker-image")
-                ));
-                style.addSource(new GeoJsonSource("selected-marker"));
-                style.addLayer(new SymbolLayer("selected-marker-layer", "selected-marker")
-                        .withProperties(PropertyFactory.iconImage("my-marker-image")
-                                ));
-
-
-                mapboxMap.addOnMapClickListener(ViewTravelStats.this);
+                else
+                {
+                    expand2.setVisibility(View.GONE);
+                    isExpand = false;
+                }
             }
         });
-    }
 
-    @SuppressWarnings({"MissingPermission"})
-    private void enableUserLocation(@NonNull Style loadedMapStyle)
-    {
-        if (PermissionsManager.areLocationPermissionsGranted(this))
-        {
-            LocationComponent lComponent = mapboxMap.getLocationComponent();
+        preparePieChart();
+        populateCityList();
 
-            lComponent.activateLocationComponent(this, loadedMapStyle);
-
-            lComponent.setLocationComponentEnabled(true);
-
-            lComponent.setCameraMode(CameraMode.TRACKING);
-
-            lComponent.setRenderMode(RenderMode.GPS);
-
-        }
-        else
-        {
-            permissionsManager = new PermissionsManager(this);
-            permissionsManager.requestLocationPermissions(this);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
-    {
-        permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    @Override
-    public void onExplanationNeeded(List<String> permissionsToExplain)
-    {
-        Toast.makeText(this, "Using your current location...?", Toast.LENGTH_LONG).show();
-    }
-
-
-    @Override
-    public void onPermissionResult(boolean granted) {
-        if (granted) {
-            mapboxMap.getStyle(new Style.OnStyleLoaded() {
-                @Override
-                public void onStyleLoaded(@NonNull Style style)
-                {
-                    enableUserLocation(style);
-                }
-            });
-        } else {
-            Toast.makeText(this, "Sorry, don't know where you are", Toast.LENGTH_LONG).show();
-            finish();
-        }
-    }
-
-    private void initRecycleView()
-    {
-        markerRecycleView.setHasFixedSize(true);
-        markerRecycleView.setVisibility(View.INVISIBLE);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, true);
-        markerRecycleView.setLayoutManager(layoutManager);
-        markerRecycleView.setItemAnimator(new DefaultItemAnimator());
-
-    }
-
-    private void addGeoJsonSource(@NonNull Style loadedMapStyle)
-    {
         try
         {
-            loadedMapStyle.addSource(new GeoJsonSource("waypoints", new URL("C:\\Users\\murryXi\\AndroidStudioProjects\\TravelDiaryApp\\app\\src\\main\\assets\\waypoints.geojson")));
+            getContinentsJson();
         }
-    }
-    @Override
-    public boolean onMapClick(@NonNull LatLng point) {
-        Style style = mapboxMap.getStyle();
-        if (style != null) {
-            final SymbolLayer selectedMarkerSymbolLayer =
-                    (SymbolLayer) style.getLayer("selected-marker-layer");
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
 
-            final PointF pixel = mapboxMap.getProjection().toScreenLocation(point);
-            List<Feature> features = mapboxMap.queryRenderedFeatures(pixel, "marker-layer");
-            List<Feature> selectedFeature = mapboxMap.queryRenderedFeatures(
-                    pixel, "selected-marker-layer");
-
-            if (selectedFeature.size() > 0 && markerSelected) {
-                return false;
-            }
-
-            if (features.isEmpty())
+        String eu = "Europe";
+        String as = "Asia";
+        String na = "North America";
+        String sa = "South America";
+        for (int i = 0 ; i < continentJson.size(); i++)
+        {
+            // remove duplicates from continents list - should be 7 unique elements
+            if (!newContinentJson.contains(continentJson.get(i)))
             {
-                if(markerSelected)
-                {
-                    deselectMarker(selectedMarkerSymbolLayer);
-                }
-                return false;
+                newContinentJson.add(continentJson.get(i));
             }
 
-            GeoJsonSource source = style.getSourceAs("selected-marker");
-            if (source != null) {
-                source.setGeoJson(FeatureCollection.fromFeatures(
-                        new Feature[]{Feature.fromGeometry(features.get(0).geometry())}));
-            }
-
-            if (markerSelected)
+            if(eu.equals(continentJson.get(i)))
             {
-                deselectMarker(selectedMarkerSymbolLayer);
+                euIndex.add(i);
             }
-            if (features.size() > 0)
+            else if(as.equals(continentJson.get(i)))
             {
-                selectMarker(selectedMarkerSymbolLayer);
-                Toast.makeText(this, "Points: " + point.getLatitude() + ", " + point.getLongitude(), Toast.LENGTH_LONG).show();
-                markerInfoView.setVisibility(View.VISIBLE);
-                dbRef.orderByChild("placeLat").equalTo(point.getLatitude())
-                        .addListenerForSingleValueEvent(new ValueEventListener()
-                {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-                    {
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren())
-                        {
-                            JournalEntry j = snapshot.getValue(JournalEntry.class);
-                            if ((point.getLatitude() == j.showLat()) && (point.getLongitude() == j.showLong()))
-                            {
-                                location.setText(j.getPlaceName());
-                                GlideApp.with(ViewTravelStats.this)
-                                        .load(j.getImgUrl())
-                                        .centerCrop()
-                                        .placeholder(R.mipmap.ic_launcher)
-                                        .transition(DrawableTransitionOptions.withCrossFade())
-                                        .into(imgView);
-                            }
-
-                        }
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        Toast.makeText(ViewTravelStats.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-
+                asIndex.add(i);
+            }
+            else if (na.equals(continentJson.get(i)))
+            {
+                naIndex.add(i);
+            }
+            else if(sa.equals(continentJson.get(i)))
+            {
+                saIndex.add(i);
             }
 
         }
-        return true;
+
     }
 
-    private void selectMarker(final SymbolLayer iconLayer)
+    private void preparePieChart()
     {
-        ValueAnimator markerAnimator = new ValueAnimator();
-        markerAnimator.setObjectValues(1f, 2f);
-        markerAnimator.setDuration(300);
-        markerAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
+        dbRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid()).child("visited_countries");
+        dbRef.addListenerForSingleValueEvent(new ValueEventListener()
         {
             @Override
-            public void onAnimationUpdate(ValueAnimator animation)
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
-                iconLayer.setProperties(PropertyFactory.iconSize((float) animation.getAnimatedValue()));
-                /*dbRef.addValueEventListener(new ValueEventListener()
+                for (DataSnapshot d : dataSnapshot.getChildren())
                 {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-                    {
-                        /* clear array to avoid duplicate views
-                        markerInfo.clear();
+                    countryList.add(d.getKey());
+                }
 
-                        /* add array of journal entries to recycle view
-                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren())
-                        {
-                            JournalEntry u = postSnapshot.getValue(JournalEntry.class);
-                            markerInfo.add(u);
-                        }
-                        /* set adapter to recycle view
-                        markerAdapter = new MarkerInfoAdapter(ViewTravelStats.this, markerInfo);
-                        markerRecycleView.setAdapter(markerAdapter);
-                    }
+                getCountryList.addAll(countryList);
+                int numCo = getCountryList.size();
+                numCountry.setText(String.valueOf(numCo));
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError)
-                    {
+                for (int i = 0; i < euIndex.size(); i++)
+                {
+                    europe.add(countryJson.get(euIndex.get(i)));
+                }
+                for (int i = 0; i < naIndex.size(); i++)
+                {
+                    na.add(countryJson.get(naIndex.get(i)));
+                }
+                for (int i = 0; i < asIndex.size(); i++)
+                {
+                    asia.add(countryJson.get(asIndex.get(i)));
+                }
+                for (int i = 0; i < saIndex.size(); i++)
+                {
+                    sa.add(countryJson.get(saIndex.get(i)));
+                }
+                europe.retainAll(getCountryList);
+                na.retainAll(getCountryList);
+                asia.retainAll(getCountryList);
+                sa.retainAll(getCountryList);
 
-                        Toast.makeText(ViewTravelStats.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });*/
+                int numEu = europe.size();
+                int numNa = na.size();
+                int numAs = asia.size();
+                int numSa = sa.size();
+
+                /* Preparing the pie chart */
+                List<PieEntry> entries = new ArrayList<>();
+
+                entries.add(new PieEntry(numEu, "Europe"));
+                entries.add(new PieEntry(numNa, "N. America"));
+                entries.add(new PieEntry(numAs, "Asia"));
+                entries.add(new PieEntry(numSa, "S. America"));
+
+                PieDataSet set = new PieDataSet(entries, "Countries visited per continent");
+                PieData data = new PieData(set);
+                pieChart.setData(data);
+                pieChart.getDescription().setEnabled(false);
+                pieChart.setExtraOffsets(5, 10, 5, 5);
+                pieChart.setDrawEntryLabels(false);
+
+                Legend l = pieChart.getLegend();
+                l.setEnabled(true);
+
+                pieChart.setDrawHoleEnabled(true);
+                pieChart.setHoleColor(Color.WHITE);
+
+                pieChart.animateY(1400, Easing.EaseInOutQuad); // Rotate Event
+                pieChart.setRotationAngle(0);
+
+                // enable rotation of the chart by touch
+                pieChart.setRotationEnabled(true);
+                pieChart.setHighlightPerTapEnabled(true);
+                set.setDrawIcons(true);
+                set.setIconsOffset(new MPPointF(0, 40));
+                set.setSelectionShift(5f);
+                set.setDrawValues(true);
+
+                List<Integer> colors = new ArrayList<>();
+                for (int c : ColorTemplate.MATERIAL_COLORS)
+                {
+                    colors.add(c);
+                }
+                set.setColors(colors);
+                PieData data2 = new PieData(set);
+                data2.setValueTextSize(11f);
+                data2.setValueTextColor(Color.WHITE);
+                pieChart.setData(data);
+
+                pieChart.invalidate();
+
+                /* Setting the progress bar meter */
+                double totalVisited = (numAs + numEu + numNa + numSa);
+                int totalCountries = 195;
+
+                double percentage = 0.0;
+                percentage = (totalVisited / totalCountries) * 100;
+
+                progressBar.setMax(totalCountries);
+                progressBar.setProgress((int)totalVisited);
+                DecimalFormat form = new DecimalFormat("0.00");
+                String progress = form.format(percentage) + "% " + "of the world!";
+                progressText.setText(progress);
+
+                Toast.makeText(ViewTravelStats.this, "+ " + totalVisited + percentage, Toast.LENGTH_SHORT).show();
             }
-        });
-        markerAnimator.start();
-        markerSelected=true;
-    }
-
-    private void deselectMarker(final SymbolLayer iconLayer)
-    {
-        ValueAnimator markerAnimator = new ValueAnimator();
-        markerAnimator.setObjectValues(2f,1f);
-        markerAnimator.setDuration(300);
-        markerAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                iconLayer.setProperties(
-                        PropertyFactory.iconSize((float) markerAnimator.getAnimatedValue()));
+            public void onCancelled(@NonNull DatabaseError databaseError)
+            {
+
             }
         });
 
-        markerAnimator.start();
-        markerSelected = false;
+        countryListAdapter = new ArrayAdapter<String>(this, R.layout.list_row, getCountryList);
+        countryListView.setAdapter(countryListAdapter);
     }
 
-    @Override
-    @SuppressWarnings( {"MissingPermission"})
-    protected void onStart() {
-        super.onStart();
-        mapView_stats.onStart();
+    public void getContinentsJson() throws JSONException
+    {
+        String json = null;
+        try
+        {
+            InputStream is = getAssets().open("csvjson.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        JSONArray jsonArray = new JSONArray(json);
+
+        countryJson = new ArrayList<>();
+        continentJson = new ArrayList<>();
+
+        countryJson.clear();
+        continentJson.clear();
+
+        final int jsonSize = json.length();
+        for (int i = 0; i < jsonSize; i++)
+        {
+            JSONObject obj = jsonArray.getJSONObject(i);
+
+            countryJson.add(obj.getString("Country_Name"));
+            continentJson.add(obj.getString("Continent_Name"));
+        }
+
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mapView_stats.onResume();
+    private void populateCityList()
+    {
+        cityList = new ArrayList<>();
+        getCityList = new ArrayList<>();
+
+        dbRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid()).child("visited_cities");
+        dbRef.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            {
+                for (DataSnapshot d : dataSnapshot.getChildren())
+                {
+                    cityList.add(d.getKey());
+                }
+
+                getCityList.addAll(cityList);
+                int numCi = getCityList.size();
+                numCity.setText(String.valueOf(numCi));
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError)
+            {
+
+            }
+        });
+
+        cityListAdapter = new ArrayAdapter<String>(this, R.layout.list_row, getCityList);
+        cityListView.setAdapter(cityListAdapter);
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mapView_stats.onStop();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        mapView_stats.onPause();
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mapView_stats.onLowMemory();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mapView_stats.onDestroy();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mapView_stats.onSaveInstanceState(outState);
+    public interface MyCallback
+    {
+        void onCallBack(List<String> value);
     }
 }

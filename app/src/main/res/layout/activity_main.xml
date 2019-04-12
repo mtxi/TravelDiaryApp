@@ -52,40 +52,35 @@
         android:layout_marginStart="0dp"
         android:layout_marginBottom="152dp" />
 
-    <android.support.design.widget.FloatingActionButton
+    <ImageView
         android:id="@+id/btn_add_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
         android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="86dp"
+        android:layout_marginStart="140dp"
+        android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:layout_toEndOf="@+id/btn_add_entry"
-        android:background="@color/colorAccent"
+        android:tint="@color/mainColour"
         android:clickable="true"
         android:focusable="true"
-        android:text="@string/Upload"
-        android:textColor="@color/common_google_signin_btn_text_dark_default"
-        app:fabSize="normal"
+        android:scaleType="fitXY"
         app:srcCompat="@drawable/ic_btn_add_location" />
 
-    <android.support.design.widget.FloatingActionButton
+    <ImageView
         android:id="@+id/btn_add_entry"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="160dp"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="230dp"
+        android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:background="@color/mainColour"
+        android:tint="@color/mainColour"
         android:clickable="true"
         android:focusable="true"
-        android:scaleType="center"
-        android:textColor="@color/common_google_signin_btn_text_dark_default"
-        app:fabSize="normal"
-        app:srcCompat="@drawable/ic_btn_image" />
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/ic_btn_image"
+        />
 
-    <android.support.design.widget.FloatingActionButton
+   <!-- <android.support.design.widget.FloatingActionButton
         android:id="@+id/btn_upload_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -99,7 +94,7 @@
         android:text="@string/Upload"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         app:fabSize="normal"
-        app:srcCompat="@drawable/ic_btn_save" />
+        />-->
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_navigation"

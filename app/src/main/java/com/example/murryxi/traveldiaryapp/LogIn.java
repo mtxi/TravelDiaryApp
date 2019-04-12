@@ -1,6 +1,9 @@
 package com.example.murryxi.traveldiaryapp;
 
 import android.content.Intent;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -12,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +29,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class LogIn extends AppCompatActivity
 {
@@ -34,6 +40,7 @@ public class LogIn extends AppCompatActivity
     private DatabaseReference dbRef;
     private Button signinBtn;
     private TextView loginView;
+    private ImageView logo;
     private String uid;
 
     private static final String TAG = "LogIn";
@@ -48,6 +55,19 @@ public class LogIn extends AppCompatActivity
         user_email = (EditText)findViewById(R.id.login_email);
         user_pass = (EditText)findViewById(R.id.login_password);
         dbRef = FirebaseDatabase.getInstance().getReference("users");
+        logo = findViewById(R.id.app_logo);
+
+        AssetManager assetManager = getAssets();
+
+        InputStream is = null;
+        try {
+            is = assetManager.open("travel.png");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Bitmap bitmap = BitmapFactory.decodeStream(is);
+        logo.setImageBitmap(bitmap);
+
 
         fbAuth = FirebaseAuth.getInstance();
 

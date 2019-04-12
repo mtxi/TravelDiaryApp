@@ -13,6 +13,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -68,15 +69,15 @@ import java.util.List;
 public class AddNewTrip extends AppCompatActivity implements OnStatePickerListener, OnCountryPickerListener, OnCityPickerListener
 {
     private static final int PICK_IMAGE_REQUEST = 1;
-    private Button pickCountry, pickCity, pickState;
-    private TextView countryName, cityName, stateName;
+    //private Button pickCountry, pickCity, pickState;
+    private TextView selectCountry, selectCity, selectDate, selectPhoto;
+    private EditText tripNotes;
     private CountryPicker countryPicker;
     private StatePicker statePicker;
     private CityPicker cityPicker;
     private ImageView bgImageView;
-    private Button imagePicker;
     private Uri imgUri;
-    private Button addTripBtn;
+    private FloatingActionButton addTripBtn;
     private BottomNavigationView botNavigationView;
     private ActionBar toolbar;
 
@@ -87,8 +88,6 @@ public class AddNewTrip extends AppCompatActivity implements OnStatePickerListen
     private FirebaseUser currentUser;
 
     DatePickerDialog pickerDialog;
-    Button chooseDate;
-    Button getDate;
     TextView showDate;
 
     public static int countryID;
@@ -104,12 +103,14 @@ public class AddNewTrip extends AppCompatActivity implements OnStatePickerListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_trip);
 
-        pickCountry = findViewById(R.id.pickCountry);
-        pickState = findViewById(R.id.pickState);
-        imagePicker = findViewById(R.id.btn_opt_bg_image);
+        selectCountry = findViewById(R.id.choose_country);
+        selectCity = findViewById(R.id.choose_city);
+        selectPhoto = findViewById(R.id.choose_photo);
+        selectDate = findViewById(R.id.choose_date);
         bgImageView = findViewById(R.id.image_view);
         addTripBtn = findViewById(R.id.btn_add_new_trip);
         botNavigationView = findViewById(R.id.bottom_navigation);
+        tripNotes = findViewById(R.id.trip_notes);
 
         toolbar = getSupportActionBar();
 
@@ -119,14 +120,9 @@ public class AddNewTrip extends AppCompatActivity implements OnStatePickerListen
         storageRef = FirebaseStorage.getInstance().getReference("newTrip_photo");
         dbRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid());
 
-        countryName = findViewById(R.id.country_name);
-        stateName = findViewById(R.id.state_name);
-
         cityList = new ArrayList<>();
         stateList = new ArrayList<>();
 
-        showDate = findViewById(R.id.text_show_date);
-        chooseDate = findViewById(R.id.btn_choose_date);
 
         try
         {
@@ -146,7 +142,7 @@ public class AddNewTrip extends AppCompatActivity implements OnStatePickerListen
             e.printStackTrace();
         }
 
-        chooseDate.setOnClickListener(new View.OnClickListener()
+        selectDate.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -161,7 +157,7 @@ public class AddNewTrip extends AppCompatActivity implements OnStatePickerListen
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth)
                     {
-                        showDate.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+                        selectDate.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
                     }
                 }, year, month, day);
 
@@ -171,7 +167,7 @@ public class AddNewTrip extends AppCompatActivity implements OnStatePickerListen
 
         countryPicker = new CountryPicker.Builder().with(this).listener(this).build();
 
-        pickCountry.setOnClickListener(new View.OnClickListener() {
+       selectCountry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
@@ -179,7 +175,7 @@ public class AddNewTrip extends AppCompatActivity implements OnStatePickerListen
             }
         });
 
-        pickState.setOnClickListener(new View.OnClickListener() {
+        selectCity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
@@ -187,7 +183,7 @@ public class AddNewTrip extends AppCompatActivity implements OnStatePickerListen
             }
         });
 
-        imagePicker.setOnClickListener(new View.OnClickListener()
+        selectPhoto.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -247,6 +243,7 @@ public class AddNewTrip extends AppCompatActivity implements OnStatePickerListen
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
 
+
     private String getFileExt(Uri uri)
     {
         ContentResolver cr = getContentResolver();
@@ -266,14 +263,14 @@ public class AddNewTrip extends AppCompatActivity implements OnStatePickerListen
             imgUri = data.getData();
 
             /* use Glide to preview selected image to image View */
-            GlideApp.with(this).load(imgUri).into(bgImageView);
+            GlideApp.with(this).load(imgUri).centerCrop().into(bgImageView);
         }
 
     }
 
     private void addNewTrip()
     {
-        /* if there is a path reference to the chosen image */
+        /* if there is a reference path to the chosen image */
         if (imgUri != null) {
             final StorageReference fileRef = storageRef.child(System.currentTimeMillis() + "." + getFileExt(imgUri));
 
@@ -292,23 +289,28 @@ public class AddNewTrip extends AppCompatActivity implements OnStatePickerListen
                     /* if uploading entry is complete */
                     if (task.isSuccessful()) {
                         final Uri dlUri = task.getResult();
-                        final String tmpCountry = countryName.getText().toString().trim();
-                        final String tmpCity = stateName.getText().toString().trim();
-                        final String tmpDate = showDate.getText().toString().trim();
+                        final String tmpCountry = selectCountry.getText().toString().trim();
+                        final String tmpCity = selectCity.getText().toString().trim();
+                        final String tmpDate = selectDate.getText().toString().trim();
+                        final String tmpNotes = tripNotes.getText().toString().trim();
+
+                        // get unique ID of the trip for future reference
+                        final String tripKey = dbRef.child("user_trips").push().getKey();
 
                         Toast.makeText(getApplicationContext(), "New trip has been added", Toast.LENGTH_LONG).show();
 
 
                         /* send trip details to realtime database */
-                        final TripInfo info = new TripInfo(tmpCountry, tmpCity, tmpDate, dlUri.toString());
+                        final TripInfo info = new TripInfo(tripKey, tmpCountry, tmpCity, tmpDate, tmpNotes, dlUri.toString());
 
                         /* add all data to current user */
-                        dbUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+                        dbUsers.addListenerForSingleValueEvent(new ValueEventListener()
+                        {
                             @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                dbRef.child("user_trips").push().setValue(info);
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                            {
+                                dbRef.child("user_trips").child(tripKey).setValue(info);
                             }
-
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -316,10 +318,10 @@ public class AddNewTrip extends AppCompatActivity implements OnStatePickerListen
                         });
 
                         /* after successful post, reset text field and image view*/
-                        countryName.setText(null);
+                        selectCountry.setText(null);
                         bgImageView.setImageResource(0);
-                        stateName.setText(null);
-                        showDate.setText(null);
+                        selectCity.setText(null);
+                        selectDate.setText(null);
 
                         Intent finish = new Intent(AddNewTrip.this, ViewJournalEntries.class);
                         finish.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -340,9 +342,10 @@ public class AddNewTrip extends AppCompatActivity implements OnStatePickerListen
             fileRef.putFile(imgUri).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    Toast.makeText(AddNewTrip.this, "Adding Trip...", Toast.LENGTH_SHORT).show();
                     /* updates the progress bar while uploading the journal entry*/
-                    double uplProgress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                    Toast.makeText(AddNewTrip.this, "Adding Trip: %" + Math.round(uplProgress), Toast.LENGTH_LONG).show();
+                    //double uplProgress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                    //Toast.makeText(AddNewTrip.this, "Adding Trip: %" + Math.round(uplProgress), Toast.LENGTH_LONG).show();
 
                 }
             });
@@ -355,12 +358,10 @@ public class AddNewTrip extends AppCompatActivity implements OnStatePickerListen
     @Override
     public void onSelectCountry(Country country)
     {
-        countryName.setText(country.getName());
+        selectCountry.setText(country.getName());
         countryID = country.getCountryId();
         statePicker.equalStateObject.clear();
         cityPicker.equalCityObject.clear();
-
-        stateName.setText("Region");
 
         for (int i = 0; i < stateList.size(); i++)
         {
@@ -382,7 +383,7 @@ public class AddNewTrip extends AppCompatActivity implements OnStatePickerListen
     public void onSelectState(State state)
     {
         /*cityPicker.equalCityObject.clear();*/
-        stateName.setText(state.getStateName());
+        selectCity.setText(state.getStateName());
         stateID = state.getStateId();
 
         for (int i = 0; i < cityList.size(); i++)
@@ -473,6 +474,24 @@ public class AddNewTrip extends AppCompatActivity implements OnStatePickerListen
             cityData.setStateId(Integer.parseInt(cit.getString("state_id")));
             cityList.add(cityData);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.actionbarmenu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.mybutton)
+        {
+            fbAuth.signOut();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

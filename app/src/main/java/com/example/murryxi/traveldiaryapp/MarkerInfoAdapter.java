@@ -22,7 +22,7 @@ public class MarkerInfoAdapter extends RecyclerView.Adapter<MarkerInfoAdapter.Vi
     {
         this.context = context;
         listOfPlaces = list;
-    }
+}
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i)

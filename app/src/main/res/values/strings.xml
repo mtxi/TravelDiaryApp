@@ -31,4 +31,6 @@
     <string name="title_activity_log_in">LogIn</string>
     <string name="title_activity_add_new_trip">AddNewTrip</string>
     <string name="marker_location_info">%1$s</string>
+    <string name="title_activity_journal_entry_detail">JournalEntryDetail</string>
+    <string name="title_activity_view_travel_stats">ViewTravelStats</string>
 </resources>

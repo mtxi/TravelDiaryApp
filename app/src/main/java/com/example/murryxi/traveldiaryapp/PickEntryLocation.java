@@ -4,16 +4,23 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mapbox.api.geocoding.v5.GeocodingCriteria;
+import com.mapbox.api.geocoding.v5.GeocodingService;
+import com.mapbox.api.geocoding.v5.MapboxGeocoding;
+import com.mapbox.api.geocoding.v5.models.CarmenContext;
+import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
@@ -36,6 +43,13 @@ import static java.lang.String.valueOf;
 
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class PickEntryLocation extends AppCompatActivity implements OnMapReadyCallback
 {
     public static final String TAG = "PickEntryLocation";
@@ -52,9 +66,10 @@ public class PickEntryLocation extends AppCompatActivity implements OnMapReadyCa
     MapView mapView_location;
     String mapBoxToken;
     private MapboxMap mapboxMap;
-    private static String placeName;
+    private String placeName;
     private static double placeLat;
     private static double placeLong;
+    public String cityVisited;
     public LatLng placeCoords;
     private FloatingActionButton searchLocation;
     public TextView locationTextView;
@@ -153,16 +168,21 @@ public class PickEntryLocation extends AppCompatActivity implements OnMapReadyCa
             // display 'Select Location' button when a place has been selected
             displayAddButton();
 
+            // to retrieve information about the searched place
+
             final CarmenFeature selectedCarmenFeature = PlaceAutocomplete.getPlace(data);
 
             /* Display location name on map */
             locationTextView.setText(String.format(getString(R.string.marker_location_info), selectedCarmenFeature.placeName().toString()));
             placeCoords = new LatLng(((Point) selectedCarmenFeature.geometry()).latitude(),
                 ((Point) selectedCarmenFeature.geometry()).longitude());
+
             placeLat = placeCoords.getLatitude();
             placeLong = placeCoords.getLongitude();
 
-            /* get textView content to String */
+            // retrieve the name of the city from the text property
+            cityVisited = selectedCarmenFeature.text().toString();
+
             placeName = locationTextView.getText().toString().trim();
 
             addLocationButton.setOnClickListener(
@@ -174,21 +194,53 @@ public class PickEntryLocation extends AppCompatActivity implements OnMapReadyCa
                             AddJournalEntry a = new AddJournalEntry();
                             JournalEntry p = new JournalEntry();
 
-                            a.lat = placeLat;
-                            a.lng = placeLong;
-                            a.placeName = placeName;
-
-                            // send data to AddJournalEntry class to be pushed to database
+                            // send data to model to be pushed to database
                             p.setLatitude(placeLat);
                             p.setLongitude(placeLong);
                             p.setPlaceName(placeName);
 
-                            Toast.makeText(PickEntryLocation.this, "Location: " + a.lat + a.lng + a.placeName, Toast.LENGTH_SHORT).show();
+                            // retrieve the country name for the chosen location with reverse geocoding request
+                            MapboxGeocoding reverseGeocode = MapboxGeocoding.builder()
+                                    .accessToken(mapBoxToken)
+                                    .query(Point.fromLngLat(placeCoords.getLongitude(),placeCoords.getLatitude()))
+                                    .geocodingTypes(GeocodingCriteria.TYPE_COUNTRY)
+                                    .mode(GeocodingCriteria.MODE_PLACES)
+                                    .build();
 
-                            Intent i = new Intent(PickEntryLocation.this, AddJournalEntry.class);
-                            i.putExtra("Location", a.placeName);
-                            i.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-                            startActivityIfNeeded(i, 0);
+                            // handle geocoding request and response
+                            reverseGeocode.enqueueCall(new Callback<GeocodingResponse>() {
+                                @Override
+                                public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
+
+                                    List<CarmenFeature> results = response.body().features();
+
+                                    if (results.size() > 0) {
+
+                                        // get the first result of the response
+                                        CarmenFeature feature = results.get(0);
+                                        String countryVisited = feature.text().toString();
+                                        Toast.makeText(PickEntryLocation.this, cityVisited + ", " + countryVisited, Toast.LENGTH_LONG).show();
+                                        Intent i = new Intent(PickEntryLocation.this, AddJournalEntry.class);
+                                        i.putExtra("Location", placeName);
+                                        i.putExtra("cityVisited", cityVisited);
+                                        i.putExtra("countryVisited", countryVisited);
+                                        i.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+                                        startActivityIfNeeded(i, 0);
+
+                                    } else {
+
+                                        // No result for your request were found.
+                                        Log.d(TAG, "onResponse: No result found");
+
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<GeocodingResponse> call, Throwable throwable) {
+                                    throwable.printStackTrace();
+                                }
+                            });
+
                             /*openMainActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                             startActivityIfNeeded(openMainActivity, 0);*/
 
@@ -253,5 +305,9 @@ public class PickEntryLocation extends AppCompatActivity implements OnMapReadyCa
         mapView_location.onSaveInstanceState(outState);
     }
 
+    public interface callback
+    {
+       void onSuccess(String data);
+    }
 
 }
